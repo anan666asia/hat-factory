@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>帽子工厂 · MBTI测试</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 80% 20%, #12172b, #080b12);
+            font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+            color: #eceef4;
+            padding: 2rem 1.5rem;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        .factory-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%23ffaa66" stroke-width="1.2" d="M70 100a30 30 0 1 1 60 0 30 30 0 0 1-60 0zm30-30a30 30 0 0 1 0 60 30 30 0 0 1 0-60z"/><circle cx="100" cy="100" r="12" fill="none" stroke="%23ffaa44" stroke-width="1"/></svg>');
+            background-repeat: repeat;
+            background-size: 50px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFCC88, #FF9F4A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-sub {
+            font-size: 0.85rem;
+            color: #8e96b5;
+            margin-top: 0.5rem;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin: 1rem 0 1.5rem;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: #2a2f44cc;
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.4rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffcd7e;
+            font-weight: 600;
+            border: 1px solid #ffaa4455;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover {
+            background: #f59e0b;
+            color: #0c0f17;
+        }
+        .quiz-card {
+            background: rgba(18, 22, 35, 0.75);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            padding: 2rem;
+            border: 1px solid rgba(255, 170, 70, 0.4);
+            box-shadow: 0 20px 30px -10px black;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        .progress-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #252c44;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #ffb347);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+        .progress-text {
+            font-size: 0.9rem;
+            color: #ffcd7e;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: right;
+        }
+        .question-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .question-number {
+            font-size: 0.8rem;
+            color: #f59e0b;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .opt-btn {
+            background: linear-gradient(135deg, #252c44, #1e2438);
+            border: 2px solid transparent;
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            color: #e2e8f0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        .opt-btn:hover {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #2a3350, #252c44);
+            transform: translateX(8px);
+        }
+        .opt-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: #f59e0b;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .opt-btn:hover::before {
+            opacity: 1;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+        .nav-btn-quiz {
+            background: #2a2f44;
+            border: 1px solid #ffaa44;
+            color: #ffcd7e;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+        .nav-btn-quiz:hover:not(:disabled) {
+            background: #f59e0b;
+            color: #0c0f17;
+        }
+        .nav-btn-quiz:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .nav-btn-quiz.primary {
+            background: #f59e0b;
+            color: #0c0f17;
+            border-color: #f59e0b;
+        }
+        .nav-btn-quiz.primary:hover {
+            background: #ffb347;
+        }
+
+        /* 结果页面 - 全屏炫酷样式 */
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a1f35, #0a0d15);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        .result-overlay.show {
+            display: flex;
+            animation: fadeIn 0.6s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .result-content {
+            text-align: center;
+            max-width: 700px;
+            animation: slideUp 0.8s ease 0.2s both;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #ff7733);
+            color: #0c0f17;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .result-type {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #FF9933, #FF7733);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 60px rgba(245, 158, 11, 0.3);
+        }
+        .result-hat {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffcc77;
+            margin-bottom: 1.5rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(255, 119, 51, 0.1));
+            border: 2px solid rgba(245, 158, 11, 0.5);
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .result-desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #c9d1e8;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .result-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .result-btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        .result-btn.primary {
+            background: linear-gradient(135deg, #f59e0b, #ff7733);
+            color: #0c0f17;
+        }
+        .result-btn.primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+        }
+        .result-btn.secondary {
+            background: transparent;
+            border: 2px solid #ffaa44;
+            color: #ffcd7e;
+        }
+        .result-btn.secondary:hover {
+            background: #ffaa44;
+            color: #0c0f17;
+        }
+        .result-link {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+        }
+        .result-link a {
+            color: #ffbc6e;
+            text-decoration: underline;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f59e0b;
+            position: absolute;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .footer-note {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8e96b5;
+        }
+
+        /* 欢迎页面 */
+        .welcome-card {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        .welcome-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .welcome-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #FFD966, #FF9933);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .welcome-desc {
+            font-size: 1rem;
+            color: #a0a8c0;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        .start-btn {
+            background: linear-gradient(135deg, #f59e0b, #ff7733);
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0c0f17;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+        }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .feature-item {
+            font-size: 0.85rem;
+            color: #8e96b5;
+        }
+
+        @media (max-width: 650px) {
+            body { padding: 1rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .question-text { font-size: 1.1rem; }
+            .result-type { font-size: 2.8rem; }
+            .result-hat { font-size: 1.5rem; padding: 0.8rem 1.5rem; }
+            .opt-btn { padding: 1rem; font-size: 0.9rem; }
+            .quiz-card { padding: 1.5rem; }
+            .welcome-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="factory-bg"></div>
+<div class="container">
+    <div class="hero">
+        <h1>🏭🧢 帽子工厂</h1>
+        <div class="hero-sub">MBTI × 经典网络梗帽子 · 测测你被扣过什么帽</div>
+        <div class="nav-links">
+            <a href="table.html" class="nav-btn">📋 查看16型罪状名录</a>
+        </div>
+    </div>
+
+    <div class="quiz-card" id="quizCard">
+        <!-- 欢迎页面 -->
+        <div id="welcomeScreen" class="welcome-card">
+            <div class="welcome-icon">🎭</div>
+            <div class="welcome-title">欢迎来到帽子工厂</div>
+            <div class="welcome-desc">
+                12道情境测试题，测出你的MBTI人格类型<br>
+                匹配「黑手」「野心家」「反党分子」等经典网络梗帽子
+            </div>
+            <button class="start-btn" onclick="startQuiz()">开始测试 ⚡</button>
+            <div class="features">
+                <div class="feature-item">⏱️ 约2分钟</div>
+                <div class="feature-item">📱 支持手机</div>
+                <div class="feature-item">🎲 纯属娱乐</div>
+            </div>
+        </div>
+
+        <!-- 题目页面 -->
+        <div id="questionScreen" style="display: none;">
+            <div class="progress-bar-container">
+                <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width: 0%"></div></div>
+                <div class="progress-text" id="progressText">1/12</div>
+            </div>
+            <div id="questionContainer" class="question-container"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn-quiz" id="prevBtn" onclick="prevQuestion()">← 上一题</button>
+                <button class="nav-btn-quiz primary" id="nextBtn" onclick="nextQuestion()" disabled>下一题 →</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer-note">
+        🧢 结果匹配「反党分子」「野心家」「黑手」等原版网络梗帽子 | 纯属讽刺艺术<br>
+        <span id="runtime" style="margin-top: 0.5rem; display: inline-block; color: #6b7280;"></span>
+    </div>
+</div>
+
+<!-- 结果全屏展示 -->
+<div id="resultOverlay" class="result-overlay">
+    <div class="result-content">
+        <div class="result-badge">🏭 帽子工厂鉴定完毕</div>
+        <div class="result-type" id="resultType">INTJ</div>
+        <div class="result-hat" id="resultHat">「黑手」</div>
+        <div class="result-desc" id="resultDesc">描述文字...</div>
+        <div class="result-actions">
+            <button class="result-btn primary" onclick="copyResult()">📋 复制结果</button>
+            <button class="result-btn secondary" onclick="resetQuiz()">🔄 重新测试</button>
+        </div>
+        <div class="result-link">
+            🔍 <a href="table.html">查看完整16型罪状名录</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { dim: "EI", text: "📢 小组讨论时，你通常？", opts: [
+            { val: "E", text: "主动发言，积极带动讨论气氛，喜欢面对面交流" },
+            { val: "I", text: "先安静听别人说，思考成熟后再发言，或者更喜欢独自整理观点" }
+        ]},
+        { dim: "EI", text: "🏫 周末的时候，你更享受？", opts: [
+            { val: "E", text: "约朋友出去玩、聚餐、参加活动，越热闹越好" },
+            { val: "I", text: "一个人待着看书、打游戏或追剧，清净自在" }
+        ]},
+        { dim: "EI", text: "🎤 在竞选演讲前，你的心态是？", opts: [
+            { val: "E", text: "兴奋，期待展示自己，享受被关注的感觉" },
+            { val: "I", text: "紧张，宁愿把想法写成书面材料也不想当众发言" }
+        ]},
+        { dim: "SN", text: "📝 写论文时，你更倾向于？", opts: [
+            { val: "S", text: "查找大量具体数据、案例，严格按照框架写" },
+            { val: "N", text: "提出新颖的观点，联系未来趋势，喜欢脑洞大开的理论" }
+        ]},
+        { dim: "SN", text: "🔬 做实验/项目时，你更关注？", opts: [
+            { val: "S", text: "步骤的精确性、操作规范、可重复的实际结果" },
+            { val: "N", text: "背后的原理、可能的新发现、实验的宏观意义" }
+        ]},
+        { dim: "SN", text: "📖 阅读时，你更在意？", opts: [
+            { val: "S", text: "具体的事实、时间地点、清晰的逻辑链条" },
+            { val: "N", text: "隐喻、象征意义和作者想表达的深层思想" }
+        ]},
+        { dim: "TF", text: "⚖️ 小组作业出现分工矛盾，你通常？", opts: [
+            { val: "T", text: "按贡献度量化，理性分析谁对谁错，严格执行规则" },
+            { val: "F", text: "先安抚情绪，尽量照顾每个人的感受，以和谐为重" }
+        ]},
+        { dim: "TF", text: "💯 评奖时，发现好友虚报加分，你会？", opts: [
+            { val: "T", text: "按规定举报，公平公正比友情更重要" },
+            { val: "F", text: "私下提醒朋友，不会上报，不想破坏关系" }
+        ]},
+        { dim: "TF", text: "🧑‍🏫 得到一个严厉但公正的评分，你更认同？", opts: [
+            { val: "T", text: "分数反应实力，严格才是负责" },
+            { val: "F", text: "应该考虑努力程度，适当给点人情分" }
+        ]},
+        { dim: "JP", text: "📅 重要任务前一个月，你的习惯是？", opts: [
+            { val: "J", text: "制定详细计划表，每天按时完成，绝不拖延" },
+            { val: "P", text: "根据状态灵活安排，最后一周突击也能应付" }
+        ]},
+        { dim: "JP", text: "🗂️ 你的书桌/电脑文件夹通常是？", opts: [
+            { val: "J", text: "分门别类，整齐有序，所有东西都有固定位置" },
+            { val: "P", text: "比较随性，东西堆在一起但自己找得到" }
+        ]},
+        { dim: "JP", text: "🎯 对于长期规划，你更偏向？", opts: [
+            { val: "J", text: "早早就定下目标，按部就班执行" },
+            { val: "P", text: "边走边看，遇到感兴趣的机会就调整方向" }
+        ]}
+    ];
+
+    const mbtiHatMap = {
+        "INTJ": { 
+            hat: "黑手", 
+            desc: "【战略家型人格】你擅长长远布局与幕后操控，思维缜密且极具洞察力。在人群中，你总是那个默默观察、深度思考的存在，不鸣则已，一鸣惊人。你追求效率和完美，对无意义的社交感到厌倦，更愿意把精力投入到真正重要的事情上。\n\n在帽子工厂眼中，这种深藏不露的策划者天生就是「黑手」—— 一切阴谋论的主角，暗中盘算的最佳人选。你的冷静被误解为冷漠，你的远见被当作算计，但你知道，那只是因为你看得比大多数人更远。",
+            traits: ["独立", "战略思维", "目标导向", "理性冷静"]
+        },
+        "INTP": { 
+            hat: "反党分子", 
+            desc: "【逻辑学家型人格】你是思想的探险家，永远质疑权威和现有规则。你热爱解构一切概念，享受在理论的迷宫中寻找真理的过程。对你来说，没有什么观点是神圣不可挑战的，真理越辩越明。\n\n在集体主义语境下，你这种天生的叛逆极易被扣上「反党分子」的帽子。但本质上，你只是思想上的叛逆哲学家，追求的是逻辑的严谨和真理的纯粹。你的批判性思维是一把双刃剑，既能刺破谎言，也可能伤及无辜。",
+            traits: ["逻辑分析", "好奇心强", "独立思考", "理论探索"]
+        },
+        "ENTJ": { 
+            hat: "野心家", 
+            desc: "【指挥官型人格】你是天生的领导者，目标感极强，不达目的不罢休。你拥有碾压性的气场和卓越的组织能力，能够迅速洞察局势并制定行动计划。效率、结果、胜利，这是你行动的三大信条。\n\n这种碾压性的领导气质，在帽子流水线上直接印上「野心家」或「资产阶级野心家」。人们嫉妒你的能力，恐惧你的野心，却不知道你只是想把事情做到最好。你的权力嗅觉灵敏，但那不是贪婪，而是对掌控局面的渴望。",
+            traits: ["领导力", "决策果断", "目标明确", "高效执行"]
+        },
+        "ENTP": { 
+            hat: "变色龙", 
+            desc: "【辩论家型人格】你是思想的杂技演员，见风使舵，享受观点交锋的快感。你能够轻松切换不同角度审视问题，善用各种逻辑为自己的立场辩护。对你来说，辩论本身就是乐趣，输赢反而次要。\n\n因为立场灵活，善用不同逻辑，被工厂鉴定为「变色龙」。人们说你善变、不可靠，却不知道你只是热爱思想实验，享受从不同角度探索真理的过程。你的多面性不是虚伪，而是智慧的体现。",
+            traits: ["机智灵活", "创新思维", "口才了得", "适应力强"]
+        },
+        "INFJ": { 
+            hat: "黑线人物", 
+            desc: "【提倡者型人格】你是理想主义的化身，拥有强烈的使命感和深刻的同理心。你能够洞察他人内心深处的情感，却常常选择保持神秘的沉默。你的直觉敏锐得惊人，仿佛能预见未来的走向。\n\n因这种神秘感和底层的激进信念，往往被划为「黑线人物」。人们觉得你是暗藏危险思想的孤狼，却不知道你只是太在乎这个世界，太想让它变得更好。你的理想主义在这个现实的世界里显得格格不入，但那正是你最珍贵的地方。",
+            traits: ["理想主义", "洞察力强", "富有同理心", "坚持信念"]
+        },
+        "INFP": { 
+            hat: "老好人", 
+            desc: "【调停者型人格】你是和平的使者，追求和谐，厌恶冲突。你拥有丰富的内心世界和强烈的个人价值观，但更愿意通过温和的方式影响他人。你善于倾听，总是尽力理解每一个人的立场。\n\n由于处处忍让、谁也不得罪，帽子工厂直接送上「老好人」牌匾。人们说你缺乏斗争性，是妥协派，却不知道你的温柔是一种选择，而非软弱。你的内心有着坚定的原则，只是你选择了用爱和理解去改变世界，而非对抗。",
+            traits: ["温和善良", "富有创意", "重视和谐", "忠于自我"]
+        },
+        "ENFJ": { 
+            hat: "黑秀才", 
+            desc: "【主人公型人格】你是天生的鼓舞者，极具煽动力和感染力，擅长用言语点燃他人的热情。你能够敏锐地感知群体的情绪，并引导大家朝着共同的目标前进。你关心他人，渴望帮助每个人发挥最大潜能。\n\n在旧式扣帽运动中，你被定性为「黑秀才」—— 会写文章、带风向的知识型危险分子。人们恐惧你的影响力，却不知道你只是想让世界变得更美好。你的热情和理想主义可能被误解为操控，但那只是因为你太在乎集体的福祉。",
+            traits: ["感染力强", "善于激励", "关怀他人", "领导魅力"]
+        },
+        "ENFP": { 
+            hat: "传话筒", 
+            desc: "【竞选者型人格】你是热情的火焰，总是充满无限的可能性和创意。你热爱自由，讨厌束缚，对新奇的事物充满好奇。你的热情能够感染身边的每一个人，让沉闷的氛围瞬间活跃起来。\n\n哪里有新闻哪里就有你，工厂给你「传话筒」的称号，形容你是道听途说、制造舆论的小喇叭。人们说你传播八卦、不够专注，却不知道你只是太热爱分享，太想让每个人都感受到生活的精彩。你的多变不是轻浮，而是对生活的热爱。",
+            traits: ["热情洋溢", "创意无限", "善于沟通", "乐观开朗"]
+        },
+        "ISTJ": { 
+            hat: "绊脚石", 
+            desc: "【检查者型人格】你是秩序的守护者，恪守规则，重视承诺。你做事一丝不苟，注重细节，确保每一个环节都准确无误。在你的世界里，责任和义务高于一切，你是最值得信赖的执行者。\n\n因过于僵化守旧，在变革潮流中总是阻碍新事物，被扣上「绊脚石」的帽子。人们说你阻碍进步，却不知道你只是太在乎稳定和可靠。你的坚持不是固执，而是对质量的追求；你的谨慎不是胆小，而是对责任的尊重。",
+            traits: ["责任心强", "注重细节", "诚实守信", "踏实稳重"]
+        },
+        "ISFJ": { 
+            hat: "奴隶主义", 
+            desc: "【守护者型人格】你是默默奉献的天使，无私地照顾着身边的每一个人。你有着极强的同理心和奉献精神，总是把他人的需求放在自己之前。你的温柔和耐心让人感到安心和被爱。\n\n这种过度牺牲被工厂鉴定为「奴隶主义」，讽刺你缺乏反抗精神，甘为附庸。人们说你太好欺负，却不知道你的付出源于内心深处的善良。你的服从不是软弱，而是选择用爱去回应这个世界。",
+            traits: ["无私奉献", "体贴入微", "忠诚可靠", "耐心细致"]
+        },
+        "ESTJ": { 
+            hat: "党内走资派", 
+            desc: "【管理者型人格】你是效率的代名词，重视传统权威，维护现有秩序。你善于组织和管理，能够迅速发现问题并制定解决方案。在你的带领下，团队总是能够高效运转，目标明确。\n\n因握有权力且偏向资本效率，直接被扣「党内走资派」，象征右倾保守路线。人们说你官僚主义，却不知道你只是想让一切井井有条。你对规则的坚持不是死板，而是对公平和效率的追求。",
+            traits: ["组织能力强", "务实高效", "重视传统", "果断决策"]
+        },
+        "ESFJ": { 
+            hat: "墙头草", 
+            desc: "【执政官型人格】你是社交的润滑剂，注重和谐与群体认同。你善于照顾他人的感受，总是努力让每个人都感到被重视和接纳。你重视传统和礼仪，是维护社会秩序的温柔力量。\n\n随风摇摆，哪边呼声高就倒向哪边，典型「墙头草」。人们说你缺乏独立立场，却不知道你只是太在乎大家的感受。你的妥协不是懦弱，而是选择用和谐去化解冲突；你的从众不是盲从，而是对集体智慧的尊重。",
+            traits: ["善于社交", "体贴他人", "重视和谐", "乐于助人"]
+        },
+        "ISTP": { 
+            hat: "小爬虫", 
+            desc: "【鉴赏家型人格】你是冷静的观察者，务实且擅长解决实际问题。你喜欢亲自动手，探索事物运作的原理。你不善言辞，但行动力极强，总能在关键时刻拿出令人信服的解决方案。\n\n被视为投机取巧的「小爬虫」，不关心大局只顾眼前利益。人们说你冷漠自私，却不知道你只是专注于自己擅长的领域。你的沉默不是疏离，而是深度思考；你的务实不是短视，而是对实际效果的追求。",
+            traits: ["冷静务实", "动手能力强", "善于分析", "独立自主"]
+        },
+        "ISFP": { 
+            hat: "小修苗", 
+            desc: "【探险家型人格】你是自由的艺术家，追求美感和个人表达。你敏感而温和，拥有独特的审美眼光和创造力。你不愿被束缚，只想按照自己的节奏去体验这个世界的美好。\n\n被工厂蔑称为「小修苗」，意指修正主义萌芽，自由主义倾向的幼苗。人们说你不切实际，却不知道你只是太在乎内心的感受。你的随性不是懒惰，而是对真实自我的忠诚；你的沉默不是冷漠，而是沉浸在自己的世界里。",
+            traits: ["艺术气质", "敏感细腻", "热爱自由", "忠于内心"]
+        },
+        "ESTP": { 
+            hat: "造谣公司", 
+            desc: "【企业家型人格】你是行动派，大胆实际，善于抓住机会。你精力充沛，喜欢冒险和刺激，总是活在当下。你擅长社交，口才了得，能够轻松应对各种复杂局面。\n\n为了利益不择手段，被冠名「造谣公司」，比喻谣言制造机、煽风点火能手。人们说你浮躁不可靠，却不知道你只是太热爱生活的刺激。你的冒险不是鲁莽，而是对机会的敏锐把握；你的直率不是冒犯，而是真实的态度。",
+            traits: ["行动力强", "善于应变", "精力充沛", "敢于冒险"]
+        },
+        "ESFP": { 
+            hat: "混进群众队伍里的坏人", 
+            desc: "【表演者型人格】你是聚光灯下的明星，热爱成为焦点，享受给他人带来欢乐的过程。你热情开朗，善于营造轻松愉快的氛围，是任何派对的灵魂人物。你活在当下，珍惜每一刻的快乐。\n\n外表亲民内心虚荣，被工厂判定为「混进群众队伍里的坏人」，典型的披着羊皮的投机者。人们说你肤浅爱炫耀，却不知道你只是想让每个人都开心。你的表现欲不是虚荣，而是分享快乐的热情；你的随性不是不负责任，而是活在当下的智慧。",
+            traits: ["活泼开朗", "善于表演", "热爱生活", "感染力强"]
+        }
+    };
+
+    let currentQ = 0;
+    let userSelections = new Array(questions.length).fill(null);
+    let scores = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+
+    function startQuiz() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('questionScreen').style.display = 'block';
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQ];
+        const container = document.getElementById("questionContainer");
+        container.innerHTML = `
+            <div class="question-number">QUESTION ${currentQ + 1} / ${questions.length}</div>
+            <div class="question-text">${q.text}</div>
+            <div class="options">
+                ${q.opts.map((opt, i) => `
+                    <button class="opt-btn ${userSelections[currentQ] === opt.val ? 'selected' : ''}" 
+                            onclick="selectOption('${opt.val}', this)" 
+                            style="${userSelections[currentQ] === opt.val ? 'border-color:#f59e0b; background: linear-gradient(135deg, #2a3350, #252c44);' : ''}">
+                        ${opt.text}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+        updateProgress();
+        updateNavButtons();
+    }
+
+    function selectOption(val, btn) {
+        userSelections[currentQ] = val;
+        document.querySelectorAll('.opt-btn').forEach(b => {
+            b.style.borderColor = 'transparent';
+            b.style.background = 'linear-gradient(135deg, #252c44, #1e2438)';
+        });
+        btn.style.borderColor = '#f59e0b';
+        btn.style.background = 'linear-gradient(135deg, #2a3350, #252c44)';
+        updateNavButtons();
+
+        setTimeout(() => {
+            if (currentQ < questions.length - 1) {
+                nextQuestion();
+            } else {
+                document.getElementById('nextBtn').innerText = '查看结果 ⚡';
+                document.getElementById('nextBtn').disabled = false;
+            }
+        }, 300);
+    }
+
+    function updateProgress() {
+        const percent = ((currentQ + (userSelections[currentQ] ? 1 : 0)) / questions.length) * 100;
+        document.getElementById("progressBar").style.width = `${percent}%`;
+        document.getElementById("progressText").innerText = `${currentQ + 1}/${questions.length}`;
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        prevBtn.disabled = currentQ === 0;
+        
+        if (currentQ === questions.length - 1) {
+            nextBtn.innerText = userSelections[currentQ] ? '查看结果 ⚡' : '下一题 →';
+            nextBtn.disabled = !userSelections[currentQ];
+        } else {
+            nextBtn.innerText = '下一题 →';
+            nextBtn.disabled = !userSelections[currentQ];
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQ < questions.length - 1) {
+            currentQ++;
+            renderQuestion();
+        } else if (userSelections[currentQ]) {
+            showResult();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQ > 0) {
+            currentQ--;
+            renderQuestion();
+        }
+    }
+
+    function computeMBTI() {
+        for (let k in scores) scores[k] = 0;
+        for (let i = 0; i < userSelections.length; i++) {
+            const ans = userSelections[i];
+            if (!ans) continue;
+            const dim = questions[i].dim;
+            if (dim === "EI") scores[ans]++;
+            else if (dim === "SN") scores[ans]++;
+            else if (dim === "TF") scores[ans]++;
+            else if (dim === "JP") scores[ans]++;
+        }
+        let type = "";
+        type += scores.E >= scores.I ? "E" : "I";
+        type += scores.S >= scores.N ? "S" : "N";
+        type += scores.T >= scores.F ? "T" : "F";
+        type += scores.J >= scores.P ? "J" : "P";
+        return type;
+    }
+
+    function showResult() {
+        const mbtiType = computeMBTI();
+        const data = mbtiHatMap[mbtiType];
+        
+        document.getElementById('resultType').innerText = mbtiType;
+        document.getElementById('resultHat').innerText = `「${data.hat}」`;
+        
+        // 处理多行描述，添加特质标签
+        const traitsHtml = data.traits ? `
+            <div style="margin: 1.5rem 0; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                ${data.traits.map(t => `<span style="background: rgba(245, 158, 11, 0.2); color: #ffcd7e; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; border: 1px solid rgba(245, 158, 11, 0.4);">#${t}</span>`).join('')}
+            </div>
+        ` : '';
+        
+        document.getElementById('resultDesc').innerHTML = data.desc.replace(/\n/g, '<br>') + traitsHtml;
+        
+        const overlay = document.getElementById('resultOverlay');
+        overlay.classList.add('show');
+        createConfetti();
+    }
+
+    function createConfetti() {
+        const colors = ['#f59e0b', '#ff7733', '#ffcc77', '#ffb347'];
+        for (let i = 0; i < 30; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                document.getElementById('resultOverlay').appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }, i * 50);
+        }
+    }
+
+    function copyResult() {
+        const mbtiType = document.getElementById('resultType').innerText;
+        const hat = document.getElementById('resultHat').innerText;
+        const data = mbtiHatMap[mbtiType];
+        const traits = data.traits ? data.traits.join(' · ') : '';
+        const text = `🧢 帽子工厂鉴定结果\n\n我的类型：${mbtiType}\n专属帽子：${hat}\n\n性格特质：${traits}\n\n${data.desc}\n\n快来测测你的原版帽子吧！`;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.result-btn.primary');
+            const original = btn.innerText;
+            btn.innerText = '✅ 已复制';
+            setTimeout(() => btn.innerText = original, 2000);
+        });
+    }
+
+    function resetQuiz() {
+        currentQ = 0;
+        userSelections.fill(null);
+        for (let k in scores) scores[k] = 0;
+        document.getElementById('resultOverlay').classList.remove('show');
+        document.getElementById('questionScreen').style.display = 'none';
+        document.getElementById('welcomeScreen').style.display = 'block';
+        document.getElementById('nextBtn').innerText = '下一题 →';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (document.getElementById('resultOverlay').classList.contains('show')) return;
+        if (document.getElementById('questionScreen').style.display === 'none') {
+            if (e.key === 'Enter') startQuiz();
+            return;
+        }
+        if (e.key === 'ArrowRight' && !document.getElementById('nextBtn').disabled) nextQuestion();
+        if (e.key === 'ArrowLeft' && currentQ > 0) prevQuestion();
+        if (e.key === '1' || e.key === '2') {
+            const btns = document.querySelectorAll('.opt-btn');
+            if (btns[e.key === '1' ? 0 : 1]) btns[e.key === '1' ? 0 : 1].click();
+        }
+    });
+
+    // 网站运行时间 - 从 2026-04-13 开始计算
+    const siteStartTime = new Date('2026-04-13T00:00:00').getTime();
+    
+    function updateRuntime() {
+        const now = Date.now();
+        const diff = now - siteStartTime;
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const runtimeEl = document.getElementById('runtime');
+        if (runtimeEl) {
+            runtimeEl.innerText = `⏱️ 本站已运行 ${days}天 ${hours}小时 ${minutes}分 ${seconds}秒`;
+        }
+    }
+    
+    updateRuntime();
+    setInterval(updateRuntime, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>帽子工厂 · 原版罪状名录</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: radial-gradient(circle at 20% 30%, #1a1e2b, #0c0f17);
+            font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+            color: #eceef4;
+            padding: 2rem 1.5rem;
+            line-height: 1.5;
+        }
+        .factory-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.06;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%23ffcc77" stroke-width="1.5" d="M70 100a30 30 0 1 1 60 0 30 30 0 0 1-60 0zm30-30a30 30 0 0 1 0 60 30 30 0 0 1 0-60z"/><circle cx="100" cy="100" r="12" fill="none" stroke="%23ffaa44" stroke-width="1.2"/><path d="M100 45v15M100 140v15M45 100h15M140 100h15M68 68l10 10M122 122l10 10M122 68l10 10M68 122l10 10" stroke="%23ffaa44" stroke-width="1.2"/></svg>');
+            background-repeat: repeat;
+            background-size: 60px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #FF9933, #CC5500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sub {
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 60px;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255,180,70,0.3);
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.2rem 0;
+        }
+        .nav-btn {
+            background: #2a2f44cc;
+            backdrop-filter: blur(8px);
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffcd7e;
+            font-weight: 600;
+            border: 1px solid #ffaa4455;
+            transition: 0.2s;
+        }
+        .nav-btn:hover {
+            background: #f59e0b;
+            color: #0c0f17;
+            border-color: #ffdd99;
+        }
+        .table-wrapper {
+            background: rgba(18, 22, 35, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            overflow-x: auto;
+            box-shadow: 0 20px 35px -12px black;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            background: #1e243b;
+            padding: 1rem 0.8rem;
+            text-align: center;
+            font-weight: 700;
+            color: #ffcd7e;
+            border-bottom: 2px solid #f59e0b;
+        }
+        td {
+            padding: 0.9rem 0.8rem;
+            border-bottom: 1px solid #2d334f;
+            vertical-align: top;
+        }
+        tr:hover {
+            background: #ffffff0a;
+        }
+        .type-badge {
+            font-weight: 800;
+            background: #00000055;
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+        .hat-name {
+            color: #ffbc6e;
+            font-weight: 700;
+        }
+        .footer-note {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #7e85a3;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            th, td { padding: 0.6rem 0.4rem; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="factory-bg"></div>
+<div class="container">
+    <div class="hero">
+        <h1><span>🏭🧢</span> 帽子工厂 · 原版罪状名录 <span>⚙️📜</span></h1>
+        <div class="sub">MBTI × 经典网络梗帽子 | 每一顶高帽都有你的性格原型</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn">← 返回测试中心</a>
+        </div>
+        <div style="font-size:0.7rem; margin-top: 0.5rem; background:#00000055; display:inline-block; padding:0.2rem 1rem; border-radius: 20px;">⚠️ 纯属娱乐 · 帽子均来自网络经典梗图 · 请勿对号入座</div>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>MBTI类型</th><th>专属原版帽子</th><th>工厂鉴定解析（原汁原味）</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="type-badge">INTJ</span></td><td class="hat-name">黑手</td><td>战略家型人格，擅长长远布局与幕后操控。在帽子工厂眼中，这种深藏不露的策划者天生就是「黑手」，一切阴谋论的主角，暗中盘算的最佳人选。</td></tr>
+                <tr><td><span class="type-badge">INTP</span></td><td class="hat-name">反党分子</td><td>逻辑学家，永远质疑权威和现有规则。热爱解构一切，在集体主义语境下极易被扣上「反党分子」的帽子，本质只是思想上的叛逆哲学家。</td></tr>
+                <tr><td><span class="type-badge">ENTJ</span></td><td class="hat-name">野心家</td><td>天生的指挥官，目标感极强，不达目的不罢休。这种碾压性的领导气质，在帽子流水线上直接印上「野心家」或「资产阶级野心家」，权力嗅觉灵敏。</td></tr>
+                <tr><td><span class="type-badge">ENTP</span></td><td class="hat-name">变色龙</td><td>辩论鬼才，见风使舵，享受观点交锋。因为立场灵活，善用不同逻辑，被工厂鉴定为「变色龙」—— 看似善变，实则是思想实验爱好者。</td></tr>
+                <tr><td><span class="type-badge">INFJ</span></td><td class="hat-name">黑线人物</td><td>提倡者，理想主义且深藏秘密使命。因神秘感和底层激进信念，往往被划为「黑线人物」，被视为暗藏危险思想的孤狼。</td></tr>
+                <tr><td><span class="type-badge">INFP</span></td><td class="hat-name">老好人</td><td>调停者，追求和谐，不愿冲突。由于处处忍让、谁也不得罪，帽子工厂直接送上「老好人」牌匾，讽刺其缺乏斗争性的妥协派。</td></tr>
+                <tr><td><span class="type-badge">ENFJ</span></td><td class="hat-name">黑秀才</td><td>主人公型，极具煽动力和感染力，擅长用言语鼓舞人心。被定性为「黑秀才」，在旧式扣帽运动中，会写文章、带风向的知识型危险分子。</td></tr>
+                <tr><td><span class="type-badge">ENFP</span></td><td class="hat-name">传话筒</td><td>竞选者，热情洋溢，信息传播机。哪里有新闻哪里就有ENFP，工厂给其「传话筒」称号，形容道听途说、制造舆论的小喇叭。</td></tr>
+                <tr><td><span class="type-badge">ISTJ</span></td><td class="hat-name">绊脚石</td><td>检查者，恪守规则，厌恶变动。因过于僵化守旧，在变革潮流中总是阻碍新事物，被扣上「绊脚石」，实为制度维护者的代价。</td></tr>
+                <tr><td><span class="type-badge">ISFJ</span></td><td class="hat-name">奴隶主义</td><td>守护者，无私奉献，习惯服从和付出。这种过度牺牲被工厂鉴定为「奴隶主义」，讽刺其缺乏反抗精神，甘为附庸。</td></tr>
+                <tr><td><span class="type-badge">ESTJ</span></td><td class="hat-name">党内走资派</td><td>管理者，重视效率与传统权威，维护现有层级。因握有权力且偏向资本效率，直接被扣「党内走资派」，象征右倾保守路线。</td></tr>
+                <tr><td><span class="type-badge">ESFJ</span></td><td class="hat-name">墙头草</td><td>执政官，注重社交和谐与群体认同。随风摇摆，哪边呼声高就倒向哪边，典型「墙头草」，缺乏独立立场。</td></tr>
+                <tr><td><span class="type-badge">ISTP</span></td><td class="hat-name">小爬虫</td><td>鉴赏家，务实冷静，擅长工具操作，但政治立场模糊。被视为投机取巧的「小爬虫」，不关心大局只顾眼前利益。</td></tr>
+                <tr><td><span class="type-badge">ISFP</span></td><td class="hat-name">小修苗</td><td>探险家，追求艺术和个人自由，对宏大叙事无感。被工厂蔑称为「小修苗」，意指修正主义萌芽，自由主义倾向的幼苗。</td></tr>
+                <tr><td><span class="type-badge">ESTP</span></td><td class="hat-name">造谣公司</td><td>企业家，大胆实际，擅长利用信息制造混乱。为了利益不择手段，被冠名「造谣公司」，比喻谣言制造机、煽风点火能手。</td></tr>
+                <tr><td><span class="type-badge">ESFP</span></td><td class="hat-name">混进群众队伍里的坏人</td><td>表演者，热爱聚光灯，混迹人群左右逢源。外表亲民内心虚荣，被工厂判定为「混进群众队伍里的坏人」，典型的披着羊皮的投机者。</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer-note">
+        🧢 帽子工厂 · 原版梗图特供 | 每个MBTI都有一顶量身定制的高帽<br>
+        <span id="runtime" style="margin-top: 0.5rem; display: inline-block; color: #6b7280;"></span>
+    </div>
+</div>
+
+<script>
+    // 网站运行时间 - 从 2026-04-13 开始计算
+    const siteStartTime = new Date('2026-04-13T00:00:00').getTime();
+    
+    function updateRuntime() {
+        const now = Date.now();
+        const diff = now - siteStartTime;
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const runtimeEl = document.getElementById('runtime');
+        if (runtimeEl) {
+            runtimeEl.innerText = `⏱️ 本站已运行 ${days}天 ${hours}小时 ${minutes}分 ${seconds}秒`;
+        }
+    }
+    
+    updateRuntime();
+    setInterval(updateRuntime, 1000);
+</script>
+</body>
+</html>
